@@ -1,0 +1,4 @@
+"/Users/aidan/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/231.9161.40/CLion.app/Contents/bin/cmake/mac/bin/cmake" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=/Users/aidan/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/231.9161.40/CLion.app/Contents/bin/ninja/mac/ninja" -DCMAKE_C_COMPILER=/usr/local/bin/gcc-13 -DCMAKE_CXX_COMPILER=/usr/local/bin/g++-13 -G Ninja -S /Users/aidan/CLionProjects/stringMath -B /Users/aidan/CLionProjects/stringMath/cmake-build-debug
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/aidan/CLionProjects/stringMath/cmake-build-debug

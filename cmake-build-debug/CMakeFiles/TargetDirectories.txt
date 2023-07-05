@@ -1,0 +1,3 @@
+/Users/aidan/CLionProjects/stringMath/cmake-build-debug/CMakeFiles/stringMath.dir
+/Users/aidan/CLionProjects/stringMath/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/aidan/CLionProjects/stringMath/cmake-build-debug/CMakeFiles/rebuild_cache.dir
