@@ -41,18 +41,23 @@ std::string sum_str(const std::string& a = "0", const std::string& b = "0")
         summation.insert(summation.cbegin(), (currSum % 10 + '0'));
         currSum /= 10;
     }
-    int bcd;
     if(rIterB == b.crend() && rIterA != a.crend())
     {
         currSum += *rIterA++ - '0';
         summation.insert(summation.cbegin(), ('0' + currSum));
         summation.insert(summation.cbegin(), rIterA, a.crend());
+        currSum /= 10;
     }
-    if(rIterA == a.crend() && rIterB != b.crend())
+    else if(rIterA == a.crend() && rIterB != b.crend())
     {
         currSum = *rIterB++ - '0';
         summation.insert(summation.cbegin(), ('0' + currSum));
         summation.insert(summation.cbegin(), rIterB, b.crend());
+        currSum /= 10;
+    }
+    if(currSum)
+    {
+      summation.insert(summation.cbegin(), ('0' + currSum));
     }
     return summation;
 }
@@ -100,12 +105,12 @@ std::string prod_str(const std::string& a, const std::string& b)
     std::vector<std::string> sums;
     std::string curr, product = "0";
     int currA, currB;
-    auto rIterA = a.crbegin();
     auto rIterB = b.crbegin();
     for(;rIterB != b.crend(); rIterB++){
         currB = *rIterB - '0';
         currA = 0;
         curr = "";
+        auto rIterA = a.crbegin();
         for(;rIterA != a.crend(); rIterA++){
             currA += currB * (*rIterA - '0');
             curr.insert(curr.cbegin(), currA%10 + '0');
@@ -113,6 +118,7 @@ std::string prod_str(const std::string& a, const std::string& b)
         }
         if(currA)
             curr.insert(curr.cbegin(), currA + '0');
+        curr.append(rIterB - b.crbegin(), '0');
         sums.emplace_back(curr);
     }
     for(const std::string& i : sums){
@@ -120,9 +126,7 @@ std::string prod_str(const std::string& a, const std::string& b)
     }
     return product;
 }
-
-
 int main() {
-    std::cout << prod_str("12", "9") << std::endl;
+    std::cout << prod_str("372", "212") << std::endl;
     return 0;
 }
