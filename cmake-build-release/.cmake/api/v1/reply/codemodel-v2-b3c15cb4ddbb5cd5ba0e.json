@@ -6,7 +6,7 @@
 			[
 				{
 					"build" : ".",
-					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"jsonFile" : "directory-.-Release-f5ebdc15457944623624.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.25"
@@ -19,7 +19,7 @@
 					]
 				}
 			],
-			"name" : "Debug",
+			"name" : "Release",
 			"projects" : 
 			[
 				{
@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "stringMath::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-stringMath-Debug-c2efa09f7e430844352d.json",
+					"jsonFile" : "target-stringMath-Release-e56f23b2bbef77dedb3c.json",
 					"name" : "stringMath",
 					"projectIndex" : 0
 				}
@@ -49,7 +49,7 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/Users/aidan/CLionProjects/stringMath/cmake-build-debug",
+		"build" : "/Users/aidan/CLionProjects/stringMath/cmake-build-release",
 		"source" : "/Users/aidan/CLionProjects/stringMath"
 	},
 	"version" : 
