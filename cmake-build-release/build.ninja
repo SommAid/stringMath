@@ -55,6 +55,12 @@ build CMakeFiles/stringMath.dir/main.cpp.o: CXX_COMPILER__stringMath_Release /Us
   OBJECT_DIR = CMakeFiles/stringMath.dir
   OBJECT_FILE_DIR = CMakeFiles/stringMath.dir
 
+build CMakeFiles/stringMath.dir/StringNumber.cpp.o: CXX_COMPILER__stringMath_Release /Users/aidan/CLionProjects/stringMath/StringNumber.cpp || cmake_object_order_depends_target_stringMath
+  DEP_FILE = CMakeFiles/stringMath.dir/StringNumber.cpp.o.d
+  FLAGS = -O3 -DNDEBUG -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.0.sdk -mmacosx-version-min=13.4 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles/stringMath.dir
+  OBJECT_FILE_DIR = CMakeFiles/stringMath.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target stringMath
@@ -63,7 +69,7 @@ build CMakeFiles/stringMath.dir/main.cpp.o: CXX_COMPILER__stringMath_Release /Us
 #############################################
 # Link the executable stringMath
 
-build stringMath: CXX_EXECUTABLE_LINKER__stringMath_Release CMakeFiles/stringMath.dir/main.cpp.o
+build stringMath: CXX_EXECUTABLE_LINKER__stringMath_Release CMakeFiles/stringMath.dir/main.cpp.o CMakeFiles/stringMath.dir/StringNumber.cpp.o
   FLAGS = -O3 -DNDEBUG -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.0.sdk -mmacosx-version-min=13.4
   OBJECT_DIR = CMakeFiles/stringMath.dir
   POST_BUILD = :

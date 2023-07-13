@@ -1,106 +1,120 @@
-#include "test.h"
+//
+// Created by Aidan Sommer on 7/12/23.
+//
+
 #include "StringNumber.h"
-#include <chrono>
 
-// we want to add two numbers that have a decimal for example 12.2 + 13.53 == 25.73
-// we can follow the same logic that we have been using however we should add the numbers to the left of the decimal
-// then we should add the numbers to the right of the decimal then apend them together (ez?)
-// current not too, sure how this will work for subtraction
-std::string dec_summation_str(const std::string& a, const std::string& b) {
-    int numDigitsPostDecA = a.cend() -  std::find(a.cbegin(), a.cend(), '.');
-    int numDigitsPostDecB = b.cend() -  std::find(b.cbegin(), b.cend(), '.');
-    if(numDigitsPostDecA || numDigitsPostDecB)
-    {
-        int posDecA = a.size() - numDigitsPostDecA;
-        int posDecB = b.size() - numDigitsPostDecB;
-        if(numDigitsPostDecA && numDigitsPostDecB)
-        {
-            // Determine the number of decimal points in the number
-            if(numDigitsPostDecB > numDigitsPostDecA){
-                numDigitsPostDecB -= numDigitsPostDecA;
-                numDigitsPostDecA = 0;
-            }
-            else if(numDigitsPostDecA > numDigitsPostDecB){
-                numDigitsPostDecA -= numDigitsPostDecB;
-                numDigitsPostDecB = 0;
-            }
-            else{
-                numDigitsPostDecB = 0;
-                numDigitsPostDecA = 0;
-            }
-            // return the sum of two strings with a decimal
-            return dec_summation_str(a.substr(0, posDecA), b.substr(0, posDecB)) + "." +
-                    dec_summation_str(a.substr(posDecA + 1).append(numDigitsPostDecB, '0'), b.substr(posDecB + 1).append(numDigitsPostDecA, '0'));
+#include <utility>
+
+// Constructor, checks if the user inputted in a correct number
+StringNumber::StringNumber(std::string num) : a(std::move(num))
+{
+    if(isValid())
+        std::cout << "Error:  " << num << " is not a valid number \n";
+}
+
+// Checks if the number contains invalid characters numbers can only contain ([-] | [.] | [0|1|2|3|4|5|6|7|8|9]... ) <- needs to be updated, so it's true
+bool StringNumber::isValid(){
+    int len = a.size();
+    if(len == 0)
+        return false;
+    else if(len == 1 && a[0] == '-')
+        return false;
+    else if(a[0] == '-')
+        return std::find_if(a.cbegin() + 1, a.cend(), [](auto num){return ((num > '9' || num < '0') && num != '.');}) != a.cend();
+    else
+        return std::find_if(a.cbegin(), a.cend(), [](auto num){return ((num > '9' || num < '0') && num != '.');}) != a.cend();
+}
+
+bool StringNumber::operator>(const StringNumber &b) {
+    bool aNeg = a[0] == '-';
+    bool bNeg = b.a[0] == '-';
+    int lenA(a.size());
+    int lenB(b.a.size());
+    if (aNeg || bNeg) {
+        if (aNeg && bNeg) {
+            return a.substr(aNeg) < b.a.substr(bNeg);
+        } else if (aNeg) {
+            return false;
+        } else {
+            return true;
         }
-        else if(numDigitsPostDecA){
-            return dec_summation_str(a.substr(0, posDecA), b) +  "." + a.substr(posDecA+1);
+    }
+    if (lenA > lenB)
+        return true;
+    else if (lenB > lenA)
+        return false;
+    else {
+        auto iterA = a.cbegin();
+        auto iterB = b.a.cbegin();
+        iterA += aNeg;
+        iterB += bNeg;
+        for (; iterA != a.cend(); iterA++, iterB++) {
+            if (*iterA > *iterB)
+                return true;
+            else if (*iterB > *iterA)
+                return false;
         }
-        else
-            return dec_summation_str(a, b.substr(0, posDecB)) +  "." + b.substr(posDecB+1);
     }
-    std::string summation;
-    int currSum = 0, pos;
-    auto rIterA = a.crbegin();
-    auto rIterB = b.crbegin();
-    for (; rIterA != a.crend() && rIterB != b.crend(); rIterA++, rIterB++) {
-        currSum += *rIterA - '0';
-        currSum += *rIterB - '0';
-        summation.insert(summation.cbegin(), (currSum % 10 + '0'));
-        currSum /= 10;
-    }
-    for (; rIterA != a.crend(); rIterA++) {
-        currSum += *rIterA - '0';
-        summation.insert(summation.cbegin(), ('0' + currSum % 10));
-        currSum /= 10;
-    }
-    if (rIterA == a.crend() && rIterB != b.crend()) {
-        currSum = *rIterB++ - '0';
-        summation.insert(summation.cbegin(), ('0' + currSum % 10));
-        currSum /= 10;
-        pos = rIterB - b.crbegin();
-        summation.insert(summation.cbegin(), b.cbegin(), b.cend() - pos);
-        currSum /= 10;
-    }
-    if (currSum) {
-        summation.insert(summation.cbegin(), ('0' + currSum));
-    }
-    return summation;
+    return false;
 }
 
-int main() {
-    std::chrono::time_point<std::chrono::system_clock> start, end;
-    start = std::chrono::system_clock::now();
-
-    std::string a = "12.33";
-    std::string b = "12.667812";
-
-    // 24.687
-    std::cout << "Sum : " << dec_summation_str(a, b) << "\n";
-    end = std::chrono::system_clock::now();
-    std::chrono::duration<double> elapsed_seconds = end - start;
-    std::cout << "Time: " << elapsed_seconds.count() << " s\n";
-    return 0;
-//     int count = 0;
-//     for(const std::string& number : nums) {
-//         std::cout << count++ << " : " << number << " : " << StringNumber(number) / StringNumber(number) << "\n";
-//     }
+bool StringNumber::operator<(const StringNumber& b)
+{
+    bool aNeg = a[0] == '-';
+    bool bNeg = b.a[0] == '-';
+    int lenA(a.size());
+    int lenB(b.a.size());
+    if (aNeg || bNeg) {
+        if (aNeg && bNeg) {
+            return a.substr(aNeg) > b.a.substr(bNeg);
+        } else if (aNeg) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    if (lenB > lenA)
+        return true;
+    else if (lenA > lenB)
+        return false;
+    else {
+        auto iterA = a.cbegin();
+        auto iterB = b.a.cbegin();
+        for (; iterB != b.a.cend(); iterB++, iterA++) {
+            if (*iterB > *iterA)
+                return true;
+            else if (*iterA > *iterB)
+                return false;
+        }
+    }
+    return false;
 }
 
-/*
- * bool operator>(const std::string& a, const std::string& b);
-bool operator<(const std::string& a, const std::string& b);
-std::string sum_str(const std::string& a, const std::string& b);
-std::string sub_str(const std::string& a, const std::string& b);
-std::string prod_str(const std::string& a, const std::string& b);
-std::string quo_str(const std::string& numerator, const std::string& denominator);
-std::string sqrt_str(const std::string& a, const std::string& b);
-
-static bool isZero(const std::string& number){
-    bool is_end = std::find_if(number.crbegin(), number.crend(), [](auto a){return a > '0';}) == number.crend();
-    return is_end;
+bool StringNumber::operator>=(const StringNumber& b){
+    return (a > b.a || a == b.a);
+}
+bool StringNumber::operator<=(const StringNumber& b){
+    return (a < b.a || a == b.a);
+}
+bool StringNumber::operator==(const StringNumber& b){
+    return (a == b.a);
+}
+std::string StringNumber::operator+(const StringNumber& b){
+    return sum_str(a, b.a);
+}
+std::string StringNumber::operator-(const StringNumber& b){
+    return sub_str(a, b.a);
+}
+std::string StringNumber::operator*(const StringNumber& b){
+    return prod_str(a, b.a);
+}
+std::string StringNumber::operator/(const StringNumber& b){
+    return quo_str(a, b.a);
 }
 
-bool operator>(const std::string& a, const std::string& b) {
+// operator overloads for std::strings
+bool StringNumber::operator>(const std::string& b){
     bool aNeg = a[0] == '-';
     bool bNeg = b[0] == '-';
 
@@ -133,7 +147,109 @@ bool operator>(const std::string& a, const std::string& b) {
     }
     return false;
 }
-bool operator<(const std::string& a, const std::string& b) {
+bool StringNumber::operator<(const std::string& b){
+    bool aNeg = a[0] == '-';
+    bool bNeg = b[0] == '-';
+    int lenA(a.size());
+    int lenB(b.size());
+    if (aNeg || bNeg) {
+        if (aNeg && bNeg) {
+            return a.substr(aNeg) > b.substr(bNeg);
+        } else if (aNeg) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    if (lenB > lenA)
+        return true;
+    else if (lenA > lenB)
+        return false;
+    else {
+        auto iterA = a.cbegin();
+        auto iterB = b.cbegin();
+        for (; iterB != b.cend(); iterB++, iterA++) {
+            if (*iterB > *iterA)
+                return true;
+            else if (*iterA > *iterB)
+                return false;
+        }
+    }
+    return false;
+}
+bool StringNumber::operator>=(const std::string& b){
+    return (a > b || a == b);
+}
+bool StringNumber::operator<=(const std::string& b){
+    return (a < b || a == b);
+}
+bool StringNumber::operator==(const std::string& b){
+    return (a == b);
+}
+std::string StringNumber::operator+(const std::string& b)
+{
+    return sum_str(a, b);
+}
+std::string StringNumber::operator-(const std::string& b)
+{
+    return sub_str(a, b);
+}
+std::string StringNumber::operator*(const std::string& b)
+{
+    return prod_str(a, b);
+}
+std::string StringNumber::operator/(const std::string& b)
+{
+    return quo_str(a, b);
+}
+
+std::string StringNumber::sqrt_str(const std::string &a, const std::string &b) {
+    return std::string();
+}
+
+std::string StringNumber::sqrt_str(const StringNumber &a, const StringNumber &b) {
+    return std::string();
+}
+
+static bool isZero(const std::string& number){
+    bool is_end = std::find_if(number.crbegin(), number.crend(), [](auto a){return a > '0';}) == number.crend();
+    return is_end;
+}
+
+static bool operator>(const std::string& a, const std::string& b) {
+    bool aNeg = a[0] == '-';
+    bool bNeg = b[0] == '-';
+
+    int lenA(a.size());
+    int lenB(b.size());
+    if (aNeg || bNeg) {
+        if (aNeg && bNeg) {
+            return a.substr(aNeg) < b.substr(bNeg);
+        } else if (aNeg) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    if (lenA > lenB)
+        return true;
+    else if (lenB > lenA)
+        return false;
+    else {
+        auto iterA = a.cbegin();
+        auto iterB = b.cbegin();
+        iterA += aNeg;
+        iterB += bNeg;
+        for (; iterA != a.cend(); iterA++, iterB++) {
+            if (*iterA > *iterB)
+                return true;
+            else if (*iterB > *iterA)
+                return false;
+        }
+    }
+    return false;
+}
+static bool operator<(const std::string& a, const std::string& b) {
     bool aNeg = a[0] == '-';
     bool bNeg = b[0] == '-';
     int lenA(a.size());
@@ -164,7 +280,7 @@ bool operator<(const std::string& a, const std::string& b) {
     return false;
 }
 // does not work for with negative numbers
-std::string sum_str(const std::string& a, const std::string& b) {
+static std::string sum_str(const std::string& a, const std::string& b) {
     bool aNeg = a[0] == '-';
     bool bNeg = b[0] == '-';
     // do negative check
@@ -208,7 +324,7 @@ std::string sum_str(const std::string& a, const std::string& b) {
 }
 
 // does not work when the difference is negative
-std::string sub_str(const std::string& a, const std::string& b)
+static std::string sub_str(const std::string& a, const std::string& b)
 {
     int negA = a[0] == '-';
     int negB = b[0] == '-';
@@ -262,7 +378,7 @@ std::string sub_str(const std::string& a, const std::string& b)
     return {difference.cbegin() + pos_first_non_zero, difference.cend()};
 }
 
-std::string prod_str(const std::string& a, const std::string& b)
+static std::string prod_str(const std::string& a, const std::string& b)
 {
     bool aNeg = a[0] == '-';
     bool bNeg = b[0] == '-';
@@ -297,7 +413,7 @@ std::string prod_str(const std::string& a, const std::string& b)
     return product;
 }
 
-std::string quo_str(const std::string& numerator, const std::string& denominator)
+static std::string quo_str(const std::string& numerator, const std::string& denominator)
 {
     if(isZero(denominator))
         return "Error: Division by Zero";
@@ -327,7 +443,7 @@ std::string quo_str(const std::string& numerator, const std::string& denominator
 }
 
 // try and make a better initial guess
-std::string sqrt_str(const std::string& a)
+static std::string sqrt_str(const std::string& a)
 {
     if(a[0] == '-')
         return "Error: Square Root of a Negative Number";
@@ -343,4 +459,6 @@ std::string sqrt_str(const std::string& a)
     }
     return myGuess;
 }
- * */
+
+
+
