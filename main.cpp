@@ -71,11 +71,10 @@ int main() {
     std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
 
-    std::string a = "12.33";
-    std::string b = "12.667812";
+    StringNumber test = StringNumber("1.2.-3ab");
 
     // 24.687
-    std::cout << "Sum : " << dec_summation_str(a, b) << "\n";
+    //std::cout << "Sum : " << dec_summation_str(a, b) << "\n";
     end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end - start;
     std::cout << "Time: " << elapsed_seconds.count() << " s\n";

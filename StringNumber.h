@@ -12,10 +12,18 @@
 
 class StringNumber {
 
+    enum ERRORS{
+        EMPTY_NUMBER,
+        INVALID_NUMBER_DECIMALS,
+        INVALID_NEGATIVE_LOCATION,
+        INVALID_CHARACTER,
+    };
+
     std::string a;
-    bool isValid();
+    std::vector<ERRORS> errors;
+    void printErrors();
+    bool isInvalid();
 public:
-    std::string getA();
     explicit StringNumber(std::string num);
     // b/c it's supposed to be "a" (which already exists in the class) + object "b" (maybe) IDK learning moment I guess :)
     // operator overloads for StringNumber Object

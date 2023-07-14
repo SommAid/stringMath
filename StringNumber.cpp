@@ -9,21 +9,81 @@
 // Constructor, checks if the user inputted in a correct number
 StringNumber::StringNumber(std::string num) : a(std::move(num))
 {
-    if(isValid())
-        std::cout << "Error:  " << num << " is not a valid number \n";
+    // If string is not valid then we need to do some code correction
+    try {
+        if(isInvalid()) {
+            throw a;
+        }
+    }
+    catch (std::string& errorNum){
+        printErrors();
+        std::cout << "Corrected Errors : " << errorNum << "\n";
+    }
+
 }
 
 // Checks if the number contains invalid characters numbers can only contain ([-] | [.] | [0|1|2|3|4|5|6|7|8|9]... ) <- needs to be updated, so it's true
-bool StringNumber::isValid(){
+// this will also do the error correction and error catching :)
+bool StringNumber::isInvalid(){
     int len = a.size();
-    if(len == 0)
+    if(len == 0){
+        errors.emplace_back(EMPTY_NUMBER);
+        return true;
+    }
+    else if(a[0] == '-'){
+        int countNegSign = 0;
+        int countDec = 0;
+        std::string copy = a;
+        int invalid = 0;
+        a.erase(std::remove_if(a.begin(),
+                               a.end(),
+                               [&countNegSign, &countDec, &invalid](auto num){return (((num == '-' && ++countNegSign > 1)  || (num == '.' && countDec++ > 0)) || ((num != '-' && num != '.') && (num > '9' || num < '0') && ++invalid > 0));})
+                , a.end());
+        if(countNegSign > 1)
+            errors.emplace_back(INVALID_NEGATIVE_LOCATION);
+        if(countDec > 1)
+            errors.emplace_back(INVALID_NUMBER_DECIMALS);
+        if(invalid)
+            errors.emplace_back(INVALID_CHARACTER);
+        if(errors.size())
+            return true;
+    }
+    else{
+        int countNegSign = 0;
+        int countDec = 0;
+        std::string copy = a;
+        int invalid = 0;
+        // Removes any invalid characters (extra ['.', '-'] or non numbers)
+        a.erase(std::remove_if(a.begin(),
+                               a.end(),
+                               [&countNegSign, &countDec, &invalid](auto num){return((num == '-' && ++countNegSign > 0)  || (num == '.' && countDec++ > 0) || (num != '.' && num != '-' && (num > '9' || num < '0') && ++invalid > 0));})
+                               , a.end());
+        if(countNegSign > 0)
+            errors.emplace_back(INVALID_NEGATIVE_LOCATION);
+        if(countDec > 1)
+            errors.emplace_back(INVALID_NUMBER_DECIMALS);
+        if(invalid)
+            errors.emplace_back(INVALID_CHARACTER);
+        if(errors.size())
+            return true;
         return false;
-    else if(len == 1 && a[0] == '-')
-        return false;
-    else if(a[0] == '-')
-        return std::find_if(a.cbegin() + 1, a.cend(), [](auto num){return ((num > '9' || num < '0') && num != '.');}) != a.cend();
-    else
-        return std::find_if(a.cbegin(), a.cend(), [](auto num){return ((num > '9' || num < '0') && num != '.');}) != a.cend();
+    }
+    return false;
+
+}
+
+void StringNumber::printErrors()
+{
+    for(const ERRORS& i: errors) {
+        if (i == EMPTY_NUMBER)
+            std::cout << "ERROR: NUMBER IS EMPTY\n";
+        else if(i == INVALID_NEGATIVE_LOCATION)
+            std::cout << "ERROR: INVALID NEGATIVE SYMBOL LOCATION OR TOO MANY\n";
+        else if(i == INVALID_NUMBER_DECIMALS)
+            std::cout << "ERROR: INVALID NUMBER OF DECIMAL POINTS\n";
+        else if(i == INVALID_CHARACTER)
+            std::cout << "ERROR: INVALID CHARACTER USED\n";
+    }
 }
 
 bool StringNumber::operator>(const StringNumber &b) {
