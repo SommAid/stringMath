@@ -34,23 +34,10 @@ public:
     bool operator==(const StringNumber& b);
     std::string operator+(const StringNumber& b);
     std::string operator-(const StringNumber& b);
-    std::string operator*(const StringNumber& b); std::string operator/(const StringNumber& b);
+    std::string operator*(const StringNumber& b);
+    std::string operator/(const StringNumber& b);
     // not sure what I want to do with this just yet (might need to make/overload some operator) ^
     std::string sqrt_str(const StringNumber& a, const StringNumber& b);
-
-    // operator overloads for std::strings
-    StringNumber& operator=(const std::string& b);
-    bool operator>(const std::string& b);
-    bool operator<(const std::string& b);
-    bool operator>=(const std::string& b);
-    bool operator<=(const std::string& b);
-    bool operator==(const std::string& b);
-    std::string operator+(const std::string& b);
-    std::string operator-(const std::string& b);
-    std::string operator*(const std::string& b);
-    std::string operator/(const std::string& b);
-    // not sure what I want to do with this just yet (might need to make/overload some operator) ^
-    std::string sqrt_str(const std::string& a, const std::string& b);
 };
 
 static bool operator>(const std::string& a, const std::string& b);

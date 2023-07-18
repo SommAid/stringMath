@@ -2,11 +2,8 @@
 #include "StringNumber.h"
 #include <chrono>
 
-// we want to add two numbers that have a decimal for example 12.2 + 13.53 == 25.73
-// we can follow the same logic that we have been using however we should add the numbers to the left of the decimal
-// then we should add the numbers to the right of the decimal then apend them together (ez?)
-// current not too, sure how this will work for subtraction
-std::string dec_summation_str(const std::string& a, const std::string& b) {
+/*  Old Decimal Addition
+ *
     int numDigitsPostDecA = a.cend() -  std::find(a.cbegin(), a.cend(), '.');
     int numDigitsPostDecB = b.cend() -  std::find(b.cbegin(), b.cend(), '.');
     if(numDigitsPostDecA || numDigitsPostDecB)
@@ -38,6 +35,43 @@ std::string dec_summation_str(const std::string& a, const std::string& b) {
         else
             return dec_summation_str(a, b.substr(0, posDecB)) +  "." + b.substr(posDecB+1);
     }
+ * */
+
+// we want to add two numbers that have a decimal for example 12.2 + 13.53 == 25.73
+// we can follow the same logic that we have been using however we should add the numbers to the left of the decimal
+// then we should add the numbers to the right of the decimal then apend them together (ez?)
+// current not too, sure how this will work for subtraction
+
+std::string dec_summation_str(std::string& a, std::string& b, bool called = false) {
+    // I should just make this better this is not scalable by any means need time to rewrite give me a second
+
+    // 12.376 + 12.689
+    // [Insert old decimal addition here in case of error]
+    int numDigitsPostDecA = a.cend() -  std::find(a.cbegin(), a.cend(), '.');
+    int numDigitsPostDecB = b.cend() -  std::find(b.cbegin(), b.cend(), '.');
+    int addZeroA = 0;
+    int addZeroB = 0;
+    bool hasDecimal = false;
+    int posDecimal;
+    if(numDigitsPostDecA || numDigitsPostDecB){
+        hasDecimal = true;
+        // Determine the number of decimal points in the final number
+        if(numDigitsPostDecB > numDigitsPostDecA) {
+            addZeroA = numDigitsPostDecB - numDigitsPostDecA;
+            posDecimal = b.size() - numDigitsPostDecB;
+        }
+        else if(numDigitsPostDecA >= numDigitsPostDecB) {
+            addZeroB = numDigitsPostDecA -= numDigitsPostDecB;
+            posDecimal = a.size() - numDigitsPostDecA;
+        }
+        a.append(addZeroA, '0');
+        b.append(addZeroB, '0');
+        // remove the decimal point in both we only care about the first one because a number can only have 1 decimal point :)
+        if(numDigitsPostDecB)
+            b.erase(std::find_if(b.begin(), b.end(), [](char currNum){return currNum == '.';}));
+        if(numDigitsPostDecA)
+            a.erase(std::find_if(a.begin(), a.end(), [](char currNum){return currNum == '.';}));
+    }
     std::string summation;
     int currSum = 0, pos;
     auto rIterA = a.crbegin();
@@ -64,6 +98,8 @@ std::string dec_summation_str(const std::string& a, const std::string& b) {
     if (currSum) {
         summation.insert(summation.cbegin(), ('0' + currSum));
     }
+    if(hasDecimal)
+        summation.insert(summation.cbegin()+posDecimal, '.');
     return summation;
 }
 
@@ -71,10 +107,10 @@ int main() {
     std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
 
-    StringNumber test = StringNumber("1.2.-3ab");
+    std::string a = "12.3378";
+    std::string b = "12.12345";
+    std::cout << dec_summation_str(a, b) << " \n";
 
-    // 24.687
-    //std::cout << "Sum : " << dec_summation_str(a, b) << "\n";
     end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end - start;
     std::cout << "Time: " << elapsed_seconds.count() << " s\n";

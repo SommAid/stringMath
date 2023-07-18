@@ -45,7 +45,7 @@ bool StringNumber::isInvalid(){
             errors.emplace_back(INVALID_NUMBER_DECIMALS);
         if(invalid)
             errors.emplace_back(INVALID_CHARACTER);
-        if(errors.size())
+        if(!errors.empty())
             return true;
     }
     else{
@@ -64,9 +64,8 @@ bool StringNumber::isInvalid(){
             errors.emplace_back(INVALID_NUMBER_DECIMALS);
         if(invalid)
             errors.emplace_back(INVALID_CHARACTER);
-        if(errors.size())
+        if(!errors.empty())
             return true;
-        return false;
     }
     return false;
 
@@ -171,100 +170,6 @@ std::string StringNumber::operator*(const StringNumber& b){
 }
 std::string StringNumber::operator/(const StringNumber& b){
     return quo_str(a, b.a);
-}
-
-// operator overloads for std::strings
-bool StringNumber::operator>(const std::string& b){
-    bool aNeg = a[0] == '-';
-    bool bNeg = b[0] == '-';
-
-    int lenA(a.size());
-    int lenB(b.size());
-    if (aNeg || bNeg) {
-        if (aNeg && bNeg) {
-            return a.substr(aNeg) < b.substr(bNeg);
-        } else if (aNeg) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-    if (lenA > lenB)
-        return true;
-    else if (lenB > lenA)
-        return false;
-    else {
-        auto iterA = a.cbegin();
-        auto iterB = b.cbegin();
-        iterA += aNeg;
-        iterB += bNeg;
-        for (; iterA != a.cend(); iterA++, iterB++) {
-            if (*iterA > *iterB)
-                return true;
-            else if (*iterB > *iterA)
-                return false;
-        }
-    }
-    return false;
-}
-bool StringNumber::operator<(const std::string& b){
-    bool aNeg = a[0] == '-';
-    bool bNeg = b[0] == '-';
-    int lenA(a.size());
-    int lenB(b.size());
-    if (aNeg || bNeg) {
-        if (aNeg && bNeg) {
-            return a.substr(aNeg) > b.substr(bNeg);
-        } else if (aNeg) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    if (lenB > lenA)
-        return true;
-    else if (lenA > lenB)
-        return false;
-    else {
-        auto iterA = a.cbegin();
-        auto iterB = b.cbegin();
-        for (; iterB != b.cend(); iterB++, iterA++) {
-            if (*iterB > *iterA)
-                return true;
-            else if (*iterA > *iterB)
-                return false;
-        }
-    }
-    return false;
-}
-bool StringNumber::operator>=(const std::string& b){
-    return (a > b || a == b);
-}
-bool StringNumber::operator<=(const std::string& b){
-    return (a < b || a == b);
-}
-bool StringNumber::operator==(const std::string& b){
-    return (a == b);
-}
-std::string StringNumber::operator+(const std::string& b)
-{
-    return sum_str(a, b);
-}
-std::string StringNumber::operator-(const std::string& b)
-{
-    return sub_str(a, b);
-}
-std::string StringNumber::operator*(const std::string& b)
-{
-    return prod_str(a, b);
-}
-std::string StringNumber::operator/(const std::string& b)
-{
-    return quo_str(a, b);
-}
-
-std::string StringNumber::sqrt_str(const std::string &a, const std::string &b) {
-    return std::string();
 }
 
 std::string StringNumber::sqrt_str(const StringNumber &a, const StringNumber &b) {
