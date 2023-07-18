@@ -2,41 +2,6 @@
 #include "StringNumber.h"
 #include <chrono>
 
-/*  Old Decimal Addition
- *
-    int numDigitsPostDecA = a.cend() -  std::find(a.cbegin(), a.cend(), '.');
-    int numDigitsPostDecB = b.cend() -  std::find(b.cbegin(), b.cend(), '.');
-    if(numDigitsPostDecA || numDigitsPostDecB)
-    {
-        int posDecA = a.size() - numDigitsPostDecA;
-        int posDecB = b.size() - numDigitsPostDecB;
-        if(numDigitsPostDecA && numDigitsPostDecB)
-        {
-            // Determine the number of decimal points in the number
-            if(numDigitsPostDecB > numDigitsPostDecA){
-                numDigitsPostDecB -= numDigitsPostDecA;
-                numDigitsPostDecA = 0;
-            }
-            else if(numDigitsPostDecA > numDigitsPostDecB){
-                numDigitsPostDecA -= numDigitsPostDecB;
-                numDigitsPostDecB = 0;
-            }
-            else{
-                numDigitsPostDecB = 0;
-                numDigitsPostDecA = 0;
-            }
-            // return the sum of two strings with a decimal
-            return dec_summation_str(a.substr(0, posDecA), b.substr(0, posDecB)) + "." +
-                    dec_summation_str(a.substr(posDecA + 1).append(numDigitsPostDecB, '0'), b.substr(posDecB + 1).append(numDigitsPostDecA, '0'));
-        }
-        else if(numDigitsPostDecA){
-            return dec_summation_str(a.substr(0, posDecA), b) +  "." + a.substr(posDecA+1);
-        }
-        else
-            return dec_summation_str(a, b.substr(0, posDecB)) +  "." + b.substr(posDecB+1);
-    }
- * */
-
 // we want to add two numbers that have a decimal for example 12.2 + 13.53 == 25.73
 // we can follow the same logic that we have been using however we should add the numbers to the left of the decimal
 // then we should add the numbers to the right of the decimal then apend them together (ez?)
