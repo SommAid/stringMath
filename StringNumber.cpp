@@ -378,7 +378,7 @@ static std::string prod_str(const std::string& a, const std::string& b)
     return product;
 }
 
-static std::string quo_str(const std::string& numerator, const std::string& denominator)
+static std::string  quo_str(const std::string& numerator, const std::string& denominator)
 {
     if(isZero(denominator))
         return "Error: Division by Zero";

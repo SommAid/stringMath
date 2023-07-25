@@ -1,12 +1,4 @@
 # ninja log v5
-10	2537	1689122306352644519	CMakeFiles/stringMath.dir/main.cpp.o	4f246abe40279d81
-2537	2758	1689122306577894164	stringMath	8b9516d38a561ecc
-5	1736	1689637793908096984	CMakeFiles/stringMath.dir/main.cpp.o	4f246abe40279d81
-5	2609	1689637794782382271	CMakeFiles/stringMath.dir/StringNumber.cpp.o	1d47012359ca8b31
-2610	2717	1689637794888443138	stringMath	4a9990dbe24c016c
-4	1812	1689639528243236773	CMakeFiles/stringMath.dir/main.cpp.o	4f246abe40279d81
-6	2281	1689639528720581552	CMakeFiles/stringMath.dir/StringNumber.cpp.o	1d47012359ca8b31
-6	2007	1689639651845960343	CMakeFiles/stringMath.dir/main.cpp.o	4f246abe40279d81
-6	2598	1689639652445036480	CMakeFiles/stringMath.dir/StringNumber.cpp.o	1d47012359ca8b31
-6	1694	1689639669773712700	CMakeFiles/stringMath.dir/main.cpp.o	4f246abe40279d81
 4	1855	1689639877490727336	CMakeFiles/stringMath.dir/main.cpp.o	4f246abe40279d81
+2610	2717	1689637794888443138	stringMath	4a9990dbe24c016c
+6	2598	1689639652445036480	CMakeFiles/stringMath.dir/StringNumber.cpp.o	1d47012359ca8b31

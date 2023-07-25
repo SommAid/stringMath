@@ -7,74 +7,130 @@
 // then we should add the numbers to the right of the decimal then apend them together (ez?)
 // current not too, sure how this will work for subtraction
 
-std::string dec_summation_str(std::string& a, std::string& b, bool called = false) {
-    // I should just make this better this is not scalable by any means need time to rewrite give me a second
+std::string dec_summation_str(const std::string& a, const std::string& b) {
+    // My Current Thought Process
+    //  **12.3412     ***67.89**
+    // +4567.12** or +12344.1237
+    // essentially we want the two numbers to be stacked on top of each other by the decimal
 
-    // 12.376 + 12.689
-    // [Insert old decimal addition here in case of error]
-    int numDigitsPostDecA = a.cend() -  std::find(a.cbegin(), a.cend(), '.');
-    int numDigitsPostDecB = b.cend() -  std::find(b.cbegin(), b.cend(), '.');
-    int addZeroA = 0;
-    int addZeroB = 0;
-    bool hasDecimal = false;
-    int posDecimal;
-    if(numDigitsPostDecA || numDigitsPostDecB){
-        hasDecimal = true;
-        // Determine the number of decimal points in the final number
-        if(numDigitsPostDecB > numDigitsPostDecA) {
-            addZeroA = numDigitsPostDecB - numDigitsPostDecA;
-            posDecimal = b.size() - numDigitsPostDecB;
+    // I might make them do addition by adding together via "bubble"
+    // bubbles are the "*" in the above example and assume the value 0 :
+    // this way I can add two numbers together without having to worry about length
+    // I wil need to implement this for non-decimal numbers, before I worry about numbers with a decimal
+    std::string summation("");
+    int lenA = a.size();
+    int lenB = b.size();
+    int lenRightDecA = a.cend() - std::find(a.cbegin(), a.cend(), '.');
+    int lenRightDecB = b.cend() -  std::find(b.cbegin(), b.cend(), '.');
+    int lenLeftDecA = lenA - lenRightDecA;
+    int lenLeftDecB = lenB - lenRightDecB;
+    /*
+     * If a decimal point exists then the length to the right of the decimal includes the decimal thus is too long by 1
+     * here if the length exits then we want to subtract it else we can keep it as zero
+     * */
+    std::string::const_reverse_iterator iterARight = a.crbegin();
+    std::string::const_reverse_iterator iterBRight = b.crbegin();
+    std::string::const_reverse_iterator iterADec = a.crbegin() + lenRightDecA;
+    std::string::const_reverse_iterator iterBDec = b.crbegin() + lenRightDecB;
+
+    // If the decimal point exists we don't want to go to far
+    lenRightDecA = lenRightDecA ? lenRightDecA - 1 : 0;
+    lenRightDecB = lenRightDecB ? lenRightDecB - 1 : 0;
+
+    // Will do the after the decimal
+    int curr = 0;
+    if(lenRightDecA > 1 || lenRightDecB > 1){
+        if(lenRightDecA > lenRightDecB){
+            for(;*iterARight != '.'  || *iterBRight != '.';){
+                if(lenRightDecA > lenRightDecB){
+                    summation += *iterARight;
+                    iterARight++;
+                    lenRightDecA--;
+                }
+                else{
+                    curr = *iterARight - '0' + *iterBRight - '0';
+                    summation += (curr%10 + '0');
+                    curr /= 10;
+                    iterARight++;
+                    iterBRight++;
+                }
+            }
         }
-        else if(numDigitsPostDecA >= numDigitsPostDecB) {
-            addZeroB = numDigitsPostDecA -= numDigitsPostDecB;
-            posDecimal = a.size() - numDigitsPostDecA;
+        else{
+            for(;*iterBRight != '.' || *iterARight != '.';){
+                if(lenRightDecB > lenRightDecA){
+                    summation += *iterBRight;
+                    iterBRight++;
+                    lenRightDecB--;
+                }
+                else{
+                    curr += (*iterARight - '0' + *iterBRight - '0');
+                    summation += (curr%10 + '0');
+                    curr /= 10;
+                    iterARight++;
+                    iterBRight++;
+                }
+            }
         }
-        a.append(addZeroA, '0');
-        b.append(addZeroB, '0');
-        // remove the decimal point in both we only care about the first one because a number can only have 1 decimal point :)
-        if(numDigitsPostDecB)
-            b.erase(std::find_if(b.begin(), b.end(), [](char currNum){return currNum == '.';}));
-        if(numDigitsPostDecA)
-            a.erase(std::find_if(a.begin(), a.end(), [](char currNum){return currNum == '.';}));
+        summation += '.';
     }
-    std::string summation;
-    int currSum = 0, pos;
-    auto rIterA = a.crbegin();
-    auto rIterB = b.crbegin();
-    for (; rIterA != a.crend() && rIterB != b.crend(); rIterA++, rIterB++) {
-        currSum += *rIterA - '0';
-        currSum += *rIterB - '0';
-        summation.insert(summation.cbegin(), (currSum % 10 + '0'));
-        currSum /= 10;
+
+    // Will do addition before the decimal
+    if(lenLeftDecA > lenLeftDecB) {
+        for (; iterADec != a.crend();){
+            if(lenLeftDecB != 0)
+            {
+                curr += (*iterADec - '0' + *iterBDec - '0');
+                summation += (curr%10 + '0');
+                curr /= 10;
+                iterADec++;
+                iterBDec++;
+                lenLeftDecB--;
+                lenLeftDecA--;
+            }
+            else
+            {
+                curr += (*iterADec - '0');
+                summation += (curr%10 + '0');
+                curr /= 10;
+                iterADec++;
+            }
+        }
     }
-    for (; rIterA != a.crend(); rIterA++) {
-        currSum += *rIterA - '0';
-        summation.insert(summation.cbegin(), ('0' + currSum % 10));
-        currSum /= 10;
+    else{
+        for(;iterBDec != b.crend();){
+            if(lenLeftDecA != 0)
+            {
+                curr += (*iterADec - '0' + *iterBDec - '0');
+                summation += (curr%10 + '0');
+                curr /= 10;
+                iterADec++;
+                iterBDec++;
+                lenLeftDecB--;
+                lenLeftDecA--;
+            }
+            else {
+                curr += (*iterBDec - '0');
+                summation += (curr % 10 + '0');
+                curr /= 10;
+                iterBDec++;
+            }
+        }
     }
-    if (rIterA == a.crend() && rIterB != b.crend()) {
-        currSum = *rIterB++ - '0';
-        summation.insert(summation.cbegin(), ('0' + currSum % 10));
-        currSum /= 10;
-        pos = rIterB - b.crbegin();
-        summation.insert(summation.cbegin(), b.cbegin(), b.cend() - pos);
-        currSum /= 10;
-    }
-    if (currSum) {
-        summation.insert(summation.cbegin(), ('0' + currSum));
-    }
-    if(hasDecimal)
-        summation.insert(summation.cbegin()+posDecimal, '.');
-    return summation;
+    if(curr == 1)
+        summation += (curr+'0');
+    return {summation.crbegin(), summation.crend()};
+
+
 }
 
 int main() {
     std::chrono::time_point<std::chrono::system_clock> start, end;
     start = std::chrono::system_clock::now();
 
-    std::string a = "12.3378";
+    std::string a = "57512.";
     std::string b = "12.12345";
-    std::cout << dec_summation_str(a, b) << " \n";
+    std::cout << "Summation " << a << " + " << b << " = " << dec_summation_str(a, b) << " \n";
 
     end = std::chrono::system_clock::now();
     std::chrono::duration<double> elapsed_seconds = end - start;
@@ -165,6 +221,32 @@ bool operator<(const std::string& a, const std::string& b) {
 }
 // does not work for with negative numbers
 std::string sum_str(const std::string& a, const std::string& b) {
+    // Modifies for Decimal Addition
+    int numDigitsPostDecA = a.cend() -  std::find(a.cbegin(), a.cend(), '.');
+    int numDigitsPostDecB = b.cend() -  std::find(b.cbegin(), b.cend(), '.');
+    int addZeroA = 0;
+    int addZeroB = 0;
+    bool hasDecimal = false;
+    int posDecimal;
+    if(numDigitsPostDecA || numDigitsPostDecB){
+        hasDecimal = true;
+        // Determine the number of decimal points in the final number
+        if(numDigitsPostDecB > numDigitsPostDecA) {
+            addZeroA = numDigitsPostDecB - numDigitsPostDecA;
+            posDecimal = b.size() - numDigitsPostDecB;
+        }
+        else if(numDigitsPostDecA >= numDigitsPostDecB) {
+            addZeroB = numDigitsPostDecA -= numDigitsPostDecB;
+            posDecimal = a.size() - numDigitsPostDecA;
+        }
+        a.append(addZeroA, '0');
+        b.append(addZeroB, '0');
+        // remove the decimal point in both we only care about the first one because a number can only have 1 decimal point :)
+        if(numDigitsPostDecB)
+            b.erase(std::find_if(b.begin(), b.end(), [](char currNum){return currNum == '.';}));
+        if(numDigitsPostDecA)
+            a.erase(std::find_if(a.begin(), a.end(), [](char currNum){return currNum == '.';}));
+    }
     bool aNeg = a[0] == '-';
     bool bNeg = b[0] == '-';
     // do negative check
